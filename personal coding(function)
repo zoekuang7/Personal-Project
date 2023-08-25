@@ -1,0 +1,34 @@
+function [numberOfWhiteRegions] = ShowOrangeAndWhiteObjects2(inputImage)
+    % Convert the input RGB image to HSV color space
+    hsvImage = rgb2hsv(inputImage);
+    hue = hsvImage(:,:,1);
+    saturation = hsvImage(:,:,2);
+    value = hsvImage(:,:,3);
+
+    % Define threshold values to detect orange and white colors
+    orangeMask = (hue > 0.05 & hue < 0.15) & (saturation > 0.6);
+    whiteMask = (saturation < 0.2) & (value > 0.8);
+
+    % Apply morphological operations to clean the masks
+    orangeMask = imfill(orangeMask, 'holes');
+    orangeMask = bwareaopen(orangeMask, 300);
+    whiteMask = imfill(whiteMask, 'holes');
+    whiteMask = bwareaopen(whiteMask, 300);
+
+    % Label the masks to separate each region (blob)
+    [orangeLabeledImage, ~] = bwlabel(orangeMask);
+    [whiteLabeledImage, numberOfWhiteRegions] = bwlabel(whiteMask); % numberOfWhiteRegions contains the number of white areas detected
+
+    % Create an output image to visualize the results
+    outputImage = zeros(size(inputImage), 'uint8'); % Initialize the output image as all zeros (black)
+    outputImage(:,:,1) = uint8(orangeLabeledImage > 0) * 255; % Orange areas in red channel
+    outputImage(:,:,3) = uint8(whiteLabeledImage > 0) * 255; % White areas in blue channel
+
+    % Display the original and output images side by side
+    figure;
+    subplot(1, 2, 1), imshow(inputImage), title('Original Image');
+    subplot(1, 2, 2), imshow(outputImage), title(['Orange and White Regions (', num2str(numberOfWhiteRegions), ' white regions detected)']);
+    
+    % Return the number of white regions detected
+    return;
+end
