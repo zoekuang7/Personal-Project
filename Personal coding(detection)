@@ -1,0 +1,20 @@
+clc; clear all; close all
+
+% Start timing
+tic;
+
+inputImage = imread('F:\Zoe_Kuang\Msc\individual project\python\datasets\crownfish\images\94.jpg');
+numberOfWhiteRegions = ShowOrangeAndWhiteObjects2(inputImage);
+
+% Display the number of white regions detected in the command window
+disp(['Total number of white regions detected: ', num2str(numberOfWhiteRegions)]);
+
+if numberOfWhiteRegions >= 2
+    disp('It is a crown fish!');
+else
+    disp('It is not a crown fish!');
+end
+
+% End timing and display elapsed time
+elapsedTime = toc;
+disp(['Elapsed time: ', num2str(elapsedTime), ' seconds']);
